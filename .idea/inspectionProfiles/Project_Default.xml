@@ -1,0 +1,35 @@
+<component name="InspectionProjectProfileManager">
+  <profile version="1.0">
+    <option name="myName" value="Project Default" />
+    <inspection_tool class="LanguageDetectionInspection" enabled="false" level="WEAK WARNING" enabled_by_default="false" />
+    <inspection_tool class="PyInterpreterInspection" enabled="false" level="WARNING" enabled_by_default="false" />
+    <inspection_tool class="PyPackageRequirementsInspection" enabled="true" level="WARNING" enabled_by_default="true">
+      <option name="ignoredPackages">
+        <list>
+          <option value="slowapi" />
+          <option value="txt" />
+          <option value="fastapi" />
+          <option value="uvicorn" />
+          <option value="redis" />
+          <option value="click" />
+          <option value="pydantic-settings" />
+          <option value="python-dotenv" />
+          <option value="textblob" />
+          <option value="langdetect" />
+          <option value="pytest" />
+          <option value="pytest-asyncio" />
+          <option value="httpx" />
+          <option value="pytest-cov" />
+          <option value="structlog" />
+          <option value="prometheus-client" />
+          <option value="black" />
+          <option value="isort" />
+          <option value="mypy" />
+          <option value="flake8" />
+          <option value="pre-commit" />
+          <option value="pydantic" />
+        </list>
+      </option>
+    </inspection_tool>
+  </profile>
+</component>
