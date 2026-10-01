@@ -1,5 +1,6 @@
 from game.logic.events_pool import EVENTS, ACTIONS
 from game.models.player import Player
+from game.models.action import Action
 
 #стартовые значения
 
@@ -19,25 +20,19 @@ def test_mental_stability():
 
 #трудный подросток :(
 
-def test_difficult_teenager_below_boundary():
+def test_difficult_teenager_boundary():
     player = Player("Test", "red")
 
-    player.bullying = 9
-
+    player.apply_effects({"bullying": 9})
+    assert player.bullying == 9
     assert player.difficult_teenager is False
 
-def test_difficult_teenager_at_boundary():
-    player = Player("Test", "red")
-
-    player.bullying = 10
-
+    player.apply_effects({"bullying": 1})
+    assert player.bullying == 10
     assert player.difficult_teenager is True
 
-def test_difficult_teenager_above_boundary():
-    player = Player("Test", "red")
-
-    player.bullying = 11
-
+    player.apply_effects({"bullying": 1})
+    assert player.bullying == 11
     assert player.difficult_teenager is True
 
 #успешный ученик :)
@@ -178,3 +173,36 @@ def test_action_a5():
         "bullying": 4,
         "stress": 3,
     }
+
+def test_can_afford():
+    """
+    провряет функцию can_afford игнорируя неположительные значения
+    """
+    player = Player("Test", "red")
+    action = Action(
+        "A",
+        "Test action",
+        {"money": 5, "friends": 0, "stress": -2},
+        {},
+        {},
+        ""
+    )
+    player.money = 10
+    player.friends = -1
+    player.stress = 0
+    assert player.can_afford(action) is True
+
+    player.money = 4
+    assert player.can_afford(action) is False
+
+def test_apply_multiple_effects():
+    player = Player("Test", "red")
+    player.apply_effects({
+        "money": 3,
+        "friends": -2,
+        "stress": 1
+    })
+
+    assert player.money == 13
+    assert player.friends == 13
+    assert player.stress == 6
