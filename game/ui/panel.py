@@ -45,9 +45,9 @@ def draw_resources(screen, fonts, images, gs):
 
     p = gs.current_player
     resources = [
-        ("stress",   p.stress,   "СТРЕСС:"),
-        ("money",    p.money,    "ДЕНЬГИ:"),
-        ("friends",  p.friends,  "ДРУЗЬЯ:"),
+        ("stress", p.stress, "СТРЕСС:"),
+        ("money", p.money, "ДЕНЬГИ:"),
+        ("friends", p.friends, "ДРУЗЬЯ:"),
         ("homework", p.homework, "ДОМАШКА:"),
         ("bullying", p.bullying, "БУЛЛИНГ:"),
     ]
@@ -70,7 +70,7 @@ def draw_resources(screen, fonts, images, gs):
         # 3. Число
         value_surface = fonts["txt6"].render(str(value), True, COLORS["col5"])
         screen.blit(value_surface, (x, 84))
-        x += value_surface.get_width() + 30   # отступ между ресурсами
+        x += value_surface.get_width() + 30  # отступ между ресурсами
 
     # Стабильность справа
     stability = p.mental_stability
@@ -93,7 +93,7 @@ def draw_log(screen, fonts, images, gs):
         bg_scaled = pygame.transform.scale(bg, (panel_rect.width, panel_rect.height))
         screen.blit(bg_scaled, (panel_rect.x, panel_rect.y))
     else:
-        draw_panel(screen, panel_rect, COLORS["col2"])   # запасной вариант
+        draw_panel(screen, panel_rect, COLORS["col2"])  # запасной вариант
 
     # Дальше — заголовок и строки лога
     title = fonts["txt3"].render(TEXT_LOG_TITLE, True, COLORS["col5"])

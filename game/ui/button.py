@@ -31,10 +31,10 @@ class Button:
         self.subtitle_font = subtitle_font or font
         self.subtitle_color = subtitle_color or COLORS["col5"]
 
-        self.color_normal   = color_normal   or COLORS["col1"]
-        self.color_hover    = color_hover    or COLORS["col1"]
+        self.color_normal = color_normal or COLORS["col1"]
+        self.color_hover = color_hover or COLORS["col1"]
         self.color_disabled = color_disabled or COLORS["col8"]
-        self.text_color     = text_color     or COLORS["col6"]
+        self.text_color = text_color or COLORS["col6"]
 
         self.enabled = True
         self.hovered = False
@@ -47,9 +47,9 @@ class Button:
 
     def is_clicked(self, mouse_pos, mouse_click):
         return (
-            self.enabled
-            and mouse_click
-            and self.rect.collidepoint(mouse_pos)
+                self.enabled
+                and mouse_click
+                and self.rect.collidepoint(mouse_pos)
         )
 
     def draw(self, screen):
@@ -66,7 +66,7 @@ class Button:
 
         # 3. Режем название на строки
         from game.config import wrap_text
-        max_w = self.rect.width - 20      # отступы по 10 с каждой стороны
+        max_w = self.rect.width - 20  # отступы по 10 с каждой стороны
         lines = wrap_text(self.text, self.font, max_w)
 
         # 4. Рисуем название (каждая строка отдельно)

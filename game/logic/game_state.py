@@ -4,6 +4,7 @@ from game.models.player import Player
 from game.logic.events_pool import EVENTS, ACTIONS
 from game.config import format_effects
 
+
 class GameState:
     def __init__(self):
         self.players = [Player(name, color) for name, color in zip(PLAYER_NAMES, PLAYER_COLORS)]
@@ -29,13 +30,13 @@ class GameState:
             self.log.pop(0)
 
     def roll_event(self):
-        event = random.choice(EVENTS)               # 1. случайное событие из 6
-        if random.random() < 0.5:                   # 2. монетка 50/50
+        event = random.choice(EVENTS)  # 1. случайное событие из 6
+        if random.random() < 0.5:  # 2. монетка 50/50
             effects = event.effects_1
         else:
             effects = event.effects_2
         self.current_player.apply_effects(effects)  # 3. применяем эффект
-        self.current_event = event                  # 4. сохраняем для UI
+        self.current_event = event  # 4. сохраняем для UI
         self.add_to_log(
             f"{self.current_player.name}: {event.title} — {format_effects(effects)}"
         )
@@ -49,13 +50,17 @@ class GameState:
             return False
 
         me = self.current_player
-        me.apply_effects(action.cost)           # 1. платим
-        me.apply_effects(action.self_effects)   # 2. получаем эффект себе
+        cost_negative = {k: -v for k, v in action.cost.items()}
+        me.apply_effects(cost_negative)  # 1. платим
+        me.apply_effects(action.self_effects)  # 2. получаем эффект себе
 
+        # 3. Если есть цель — применяем к ней (BUG-002)
         target = None
         if target_index is not None and target_index != self.current_player_index:
             target = self.players[target_index]
-        target.apply_effects(action.target_effects)   # 3. эффект цели
+
+        if target is not None and action.target_effects:
+            target.apply_effects(action.target_effects)
 
         if target:
             self.add_to_log(f"{me.name}: {action.title} → {target.name}")
@@ -67,16 +72,15 @@ class GameState:
     def next_turn(self):
         """Переход к следующему игроку. Проверяет выбывших и победителя."""
 
-        self.newly_eliminated = []
-
         # 1. Помечаем всех, у кого буллинг >= 10, как выбывших
+        self.newly_eliminated = []
         for p in self.players:
             if p.difficult_teenager and p not in self.eliminated:
                 self.eliminated.append(p)
                 self.newly_eliminated.append(p)
                 self.add_to_log(f"{p.name} выбыл (буллинг >= {LOSE_BULLYING})")
 
-        # 2. Считаем, кто ещё активен
+        # 2. Считаем активных
         active_players = [p for p in self.players if p not in self.eliminated]
 
         # 3. Если остался 1 или 0 активных — конец игры
@@ -87,7 +91,7 @@ class GameState:
                 self.add_to_log(f"{self.winner.name} победил — остался последним!")
             return
 
-        # 4. Проверяем победителя по стабильности
+        # 4. Проверка победителя по стабильности
         for p in active_players:
             if p.successful_student:
                 self.game_over = True
@@ -99,7 +103,6 @@ class GameState:
         self.current_player_index = (self.current_player_index + 1) % len(self.players)
         while self.players[self.current_player_index] in self.eliminated:
             self.current_player_index = (self.current_player_index + 1) % len(self.players)
-            # защита от бесконечного цикла
             if all(p in self.eliminated for p in self.players):
                 break
 

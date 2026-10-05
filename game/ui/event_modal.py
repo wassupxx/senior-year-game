@@ -17,7 +17,6 @@ from game.config import (
 from game.ui.button import Button
 
 
-
 class EventModal:
     """Модальное окно с событием и кнопкой «Продолжить»."""
 
@@ -104,6 +103,7 @@ class EventModal:
         """Была ли нажата кнопка «Продолжить»."""
         return self.continue_button.is_clicked(mouse_pos, mouse_click)
 
+
 class GameModal:
     """Модалка конца игры: победа или поражение."""
 
@@ -187,6 +187,7 @@ class GameModal:
 
     def is_new_game_clicked(self, mouse_pos, mouse_click):
         return self.new_game_button.is_clicked(mouse_pos, mouse_click)
+
 
 class EliminationModal:
     """Модалка выбывания одного игрока. Игра продолжается."""
