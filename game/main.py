@@ -61,13 +61,25 @@ def load_images():
     return images
 
 
+
 def create_action_buttons(fonts):
-    """Создаёт 5 кнопок действий со стоимостью."""
-    from game.ui.event_modal import format_cost  # используем тот же форматтер
+    from game.config import format_cost
 
     buttons = []
-    btn_width, btn_height, gap = 230, 70, 10   # высоту увеличили с 60 до 70
-    x, y = 20, 630                             # сдвинули y чуть вверх
+
+    n = len(ACTIONS)            # 5 кнопок
+    side_margin = 20            # отступ от краёв окна
+    gap = 10                    # зазор между кнопками
+    btn_height = 75
+    y = 630
+
+    # Общая ширина, которую занимают все кнопки
+    total_width = WIDTH - 2 * side_margin - (n - 1) * gap
+
+    # Ширина одной кнопки
+    btn_width = total_width // n
+
+    x = side_margin
     for action in ACTIONS:
         rect = pygame.Rect(x, y, btn_width, btn_height)
         cost_text = format_cost(action.cost) if action.cost else "бесплатно"
@@ -78,7 +90,7 @@ def create_action_buttons(fonts):
                 font=fonts["txt5"],
                 subtitle=cost_text,
                 subtitle_font=fonts["txt6"],
-                subtitle_color=COLORS["col5"],   # тёмный, чтобы читалось на светлом
+                subtitle_color=COLORS["col5"],
                 color_hover=COLORS["col2"],
             )
         )

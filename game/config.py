@@ -52,13 +52,13 @@ FONT_BAD_SCRIPT = "game/assets/fonts/BadScript-Regular.ttf"
 # Шрифты инициализируются в main.py после pygame.init()
 # Здесь только описание: ключ → (путь, размер)
 FONTS_SPEC = {
-    "txt1": (FONT_PATH,       24),   # панель 1, "Новая игра", описание конца игры, название события
-    "txt2": (FONT_PATH,       20),   # панель 2, "действия:", панель 4
-    "txt3": (FONT_BAD_SCRIPT, 48),   # "Лог событий"
-    "txt4": (FONT_PATH,       36),   # "Событие", "Победа", "Школьник выбыл"
-    "txt5": (FONT_PATH,       12),   # варианты действий
-    "txt6": (FONT_PATH,       14),   # "Продолжить", описание всплывающего события
-    "txt7": (FONT_PATH,       17),   # эффекты от события
+    "txt1": (FONT_PATH,       20),   # панель 1, "Новая игра", описание конца игры, название события
+    "txt2": (FONT_PATH,       16),   # панель 2, "действия:", панель 4
+    "txt3": (FONT_BAD_SCRIPT, 42),   # "Лог событий"
+    "txt4": (FONT_PATH,       30),   # "Событие", "Победа", "Школьник выбыл"
+    "txt5": (FONT_PATH,       10),   # варианты действий
+    "txt6": (FONT_PATH,       12),   # "Продолжить", описание всплывающего события
+    "txt7": (FONT_PATH,       14),   # эффекты от события
 }
 
 
@@ -172,3 +172,23 @@ def format_cost(cost):
         name = RESOURCE_NAMES.get(key, key)
         parts.append(f"−{abs(value)} {name}")
     return ", ".join(parts)
+
+def wrap_text(text, font, max_width):
+    """
+    Режет текст на строки по max_width пикселей.
+    Возвращает список строк.
+    """
+    words = text.split()
+    lines = []
+    current = ""
+    for word in words:
+        test = (current + " " + word).strip()
+        if font.size(test)[0] <= max_width:
+            current = test
+        else:
+            if current:
+                lines.append(current)
+            current = word
+    if current:
+        lines.append(current)
+    return lines

@@ -12,6 +12,7 @@ from game.config import (
     WIDTH, COLORS, PANEL_RADIUS,
     TEXT_LOG_TITLE, TEXT_EVENT_TITLE,
 )
+from game.config import wrap_text
 
 
 def draw_panel(screen, rect, color, radius=PANEL_RADIUS):
@@ -39,7 +40,7 @@ def draw_hud(screen, fonts, gs):
 # ============================================================
 def draw_resources(screen, fonts, images, gs):
     """5 ресурсов в ряд: [иконка] название число."""
-    panel_rect = pygame.Rect(0, 60, WIDTH, 70)
+    panel_rect = pygame.Rect(0, 60, WIDTH, 80)
     draw_panel(screen, panel_rect, COLORS["col1"])
 
     p = gs.current_player
@@ -98,11 +99,16 @@ def draw_log(screen, fonts, images, gs):
     title = fonts["txt3"].render(TEXT_LOG_TITLE, True, COLORS["col5"])
     screen.blit(title, (60, 180))
 
-    y = 250
+    y = 260
+    max_w = panel_rect.width - 80  # ширина панели минус отступы
+    line_h = fonts["txt6"].get_height() + 4  # высота строки с зазором
+
     for line in gs.log:
-        text = fonts["txt6"].render(line, True, COLORS["col5"])
-        screen.blit(text, (60, y))
-        y += 25
+        wrapped = wrap_text(line, fonts["txt6"], max_w)
+        for part in wrapped:
+            text = fonts["txt6"].render(part, True, COLORS["col5"])
+            screen.blit(text, (60, y))
+            y += line_h
 
 
 # ============================================================
