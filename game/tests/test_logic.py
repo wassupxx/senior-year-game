@@ -410,7 +410,8 @@ def test_player_with_bullying_10_loses():
     gs.next_turn()
 
     assert gs.game_over is False
-    assert gs.loser == loser
+    assert loser.difficult_teenager is True
+    assert loser in gs.eliminated
     assert gs.winner is None
 
 def test_player_with_bullying_above_10_loses():
@@ -422,7 +423,8 @@ def test_player_with_bullying_above_10_loses():
     gs.next_turn()
 
     assert gs.game_over is False
-    assert gs.loser == loser
+    assert loser.difficult_teenager is True
+    assert loser in gs.eliminated
 
 def test_player_with_bullying_9_does_not_lose():
     """при bullying = 9 игрок ещё не проиграл"""
@@ -434,7 +436,8 @@ def test_player_with_bullying_9_does_not_lose():
     gs.next_turn()
 
     assert gs.game_over is False
-    assert gs.loser is None
+    assert player.difficult_teenager is False
+    assert player not in gs.eliminated
 
 def test_successful_student_wins():
     """игрок со стабильностью >= 60 должен победить"""
