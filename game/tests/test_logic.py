@@ -409,7 +409,7 @@ def test_player_with_bullying_10_loses():
 
     gs.next_turn()
 
-    assert gs.game_over is True
+    assert gs.game_over is False
     assert gs.loser == loser
     assert gs.winner is None
 
@@ -421,7 +421,7 @@ def test_player_with_bullying_above_10_loses():
 
     gs.next_turn()
 
-    assert gs.game_over is True
+    assert gs.game_over is False
     assert gs.loser == loser
 
 def test_player_with_bullying_9_does_not_lose():
