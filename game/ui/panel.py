@@ -38,54 +38,70 @@ def draw_hud(screen, fonts, gs):
 # Панель ресурсов
 # ============================================================
 def draw_resources(screen, fonts, images, gs):
-    """5 иконок ресурсов + числа + ментальная стабильность."""
+    """5 ресурсов в ряд: [иконка] название число."""
     panel_rect = pygame.Rect(0, 60, WIDTH, 70)
     draw_panel(screen, panel_rect, COLORS["col1"])
 
     p = gs.current_player
     resources = [
-        ("stress",   p.stress),
-        ("money",    p.money),
-        ("friends",  p.friends),
-        ("homework", p.homework),
-        ("bullying", p.bullying),
+        ("stress",   p.stress,   "СТРЕСС:"),
+        ("money",    p.money,    "ДЕНЬГИ:"),
+        ("friends",  p.friends,  "ДРУЗЬЯ:"),
+        ("homework", p.homework, "ДОМАШКА:"),
+        ("bullying", p.bullying, "БУЛЛИНГ:"),
     ]
 
-    x = 30
-    for key, value in resources:
+    x = 40
+    icon_size = 32
+    for key, value, label in resources:
+        # 1. Иконка
         icon = images.get(f"icon_{key}")
         if icon:
-            icon_scaled = pygame.transform.scale(icon, (40, 40))
-            screen.blit(icon_scaled, (x, 75))
-            x += 45
+            icon_scaled = pygame.transform.scale(icon, (icon_size, icon_size))
+            screen.blit(icon_scaled, (x, 78))
+            x += icon_size + 8
 
-        text = fonts["txt2"].render(str(value), True, COLORS["col5"])
-        screen.blit(text, (x, 85))
-        x += 60
+        # 2. Подпись
+        label_surface = fonts["txt5"].render(label, True, COLORS["col5"])
+        screen.blit(label_surface, (x, 86))
+        x += label_surface.get_width() + 8
 
+        # 3. Число
+        value_surface = fonts["txt6"].render(str(value), True, COLORS["col5"])
+        screen.blit(value_surface, (x, 84))
+        x += value_surface.get_width() + 30   # отступ между ресурсами
+
+    # Стабильность справа
     stability = p.mental_stability
     text = fonts["txt2"].render(
-        f"Стабильность: {stability:.1f}",
+        f"СТАБИЛЬНОСТЬ: {stability:.1f}",
         True, COLORS["col5"],
     )
-    screen.blit(text, (WIDTH - 300, 85))
+    screen.blit(text, (WIDTH - 280, 85))
 
 
 # ============================================================
 # Лог событий
 # ============================================================
 def draw_log(screen, fonts, images, gs):
-    """Лог последних 5 событий и действий слева."""
     panel_rect = pygame.Rect(0, 140, 400, 460)
-    draw_panel(screen, panel_rect, COLORS["col2"])
 
+    # Фон — картинка LogPanel
+    bg = images.get("log_panel")
+    if bg:
+        bg_scaled = pygame.transform.scale(bg, (panel_rect.width, panel_rect.height))
+        screen.blit(bg_scaled, (panel_rect.x, panel_rect.y))
+    else:
+        draw_panel(screen, panel_rect, COLORS["col2"])   # запасной вариант
+
+    # Дальше — заголовок и строки лога
     title = fonts["txt3"].render(TEXT_LOG_TITLE, True, COLORS["col5"])
-    screen.blit(title, (20, 150))
+    screen.blit(title, (60, 180))
 
-    y = 220
+    y = 250
     for line in gs.log:
         text = fonts["txt6"].render(line, True, COLORS["col5"])
-        screen.blit(text, (20, y))
+        screen.blit(text, (60, y))
         y += 25
 
 
@@ -93,17 +109,22 @@ def draw_log(screen, fonts, images, gs):
 # Карточка события
 # ============================================================
 def draw_event_card(screen, fonts, images, gs):
-    """Название события справа и эффекты от него."""
     panel_rect = pygame.Rect(420, 140, WIDTH - 440, 460)
-    draw_panel(screen, panel_rect, COLORS["col2"])
 
+    # Фон — картинка Event Card
+    bg = images.get("event_card")
+    if bg:
+        bg_scaled = pygame.transform.scale(bg, (panel_rect.width, panel_rect.height))
+        screen.blit(bg_scaled, (panel_rect.x, panel_rect.y))
+    else:
+        draw_panel(screen, panel_rect, COLORS["col2"])
+
+    # Название события
     if gs.current_event:
-        title = fonts["txt4"].render(
-            gs.current_event.title, True, COLORS["col5"],
-        )
+        title = fonts["txt4"].render(gs.current_event.title, True, COLORS["col6"])
         screen.blit(title, (450, 160))
     else:
         text = fonts["txt2"].render(
-            "Событие ещё не произошло", True, COLORS["col9"],
+            "Событие ещё не произошло", True, COLORS["col6"],
         )
         screen.blit(text, (450, 160))

@@ -3,32 +3,32 @@ from game.models.action import Action
 
 EVENTS = [
     RandomEvent(
-        "E1", "Обед",
+        "E1", "ОБЕД",
         {"stress": -3, "money": -5},
         {"money": -3, "homework": 2},
     ),
     RandomEvent(
-        "E2", "Контрольная",
+        "E2", "КОНТРОЛЬНАЯ",
         {"homework": 3, "stress": -1},
         {"stress": 3, "bullying": 4},
     ),
     RandomEvent(
-        "E3", "Прогул",
+        "E3", "ПРОГУЛ",
         {"friends": 5, "bullying": -2},
         {"stress": 3, "bullying": 4},
     ),
     RandomEvent(
-        "E4", "Опоздание",
+        "E4", "ОПОЗДАНИЕ",
         {"friends": 2},
         {"bullying": 5},
     ),
     RandomEvent(
-        "E5", "Встреча с параллелью",
+        "E5", "ВСТРЕЧА С ПАРАЛЛЕЛЬЮ",
         {"friends": 3},
         {"bullying": 4},
     ),
     RandomEvent(
-        "E6", "Перемена",
+        "E6", "ПЕРЕМЕНА",
         {"homework": 3, "stress": -2},
         {"money": -5, "bullying": 3},
     )
@@ -51,8 +51,8 @@ ACTIONS = [
     ),
     Action(
         "A3", "Списать у одноклассника",
-        cost={"stress": 4},
-        self_effects={"friends": 4, "money": -1},
+        cost={"stress": 2},
+        self_effects={"stress": 6, "friends": 4, "money": -1},
         target_effects={"money": 1, "bullying": 2},
         description="+4 стресс. Тебе +4 друзья, −1 деньги. Ему +1 деньги, +2 буллинг.",
     ),

@@ -139,3 +139,36 @@ TEXT_CONTINUE     = "Продолжить"
 TEXT_NEW_GAME     = "Новая игра"
 TEXT_WIN          = "Победа"
 TEXT_LOSS         = "Школьник выбыл"
+
+# ============================================================
+# ФОРМАТИРОВАНИЕ ЭФФЕКТОВ
+# ============================================================
+RESOURCE_NAMES = {
+    "stress":   "стресс",
+    "money":    "деньги",
+    "friends":  "друзья",
+    "homework": "домашка",
+    "bullying": "буллинг",
+}
+
+
+def format_effects(effects):
+    """{'friends': 3, 'stress': -2} → '+3 друзья, −2 стресс'."""
+    if not effects:
+        return ""
+    parts = []
+    for key, value in effects.items():
+        sign = "+" if value > 0 else "−"
+        name = RESOURCE_NAMES.get(key, key)
+        parts.append(f"{sign}{abs(value)} {name}")
+    return ", ".join(parts)
+
+
+def format_cost(cost):
+    """{'homework': 3} → '−3 домашка'"""
+
+    parts = []
+    for key, value in cost.items():
+        name = RESOURCE_NAMES.get(key, key)
+        parts.append(f"−{abs(value)} {name}")
+    return ", ".join(parts)

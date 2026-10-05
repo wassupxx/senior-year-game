@@ -18,7 +18,8 @@ from game.ui.button import Button
 from game.ui.panel import (
     draw_hud, draw_resources, draw_log, draw_event_card,
 )
-from game.ui.event_modal import EventModal
+from game.ui.event_modal import EventModal, GameModal, EliminationModal
+from game.config import format_cost
 
 
 # ─── Состояния игры ───
@@ -26,6 +27,7 @@ STATE_EVENT_MODAL   = "EVENT_MODAL"
 STATE_CHOOSE_ACTION = "CHOOSE_ACTION"
 STATE_CHOOSE_TARGET = "CHOOSE_TARGET"
 STATE_GAME_OVER     = "GAME_OVER"
+STATE_ELIMINATION   = "ELIMINATION"
 
 
 def load_fonts():
@@ -40,11 +42,15 @@ def load_fonts():
 
 
 def load_images():
+    """Загружает иконки, фоны и картинки событий."""
+    from game.config import EVENT_IMAGES   # импорт на месте
+
     images = {}
     paths = {
         "log_panel":  IMG_LOG_PANEL,
         "event_card": IMG_EVENT_CARD,
         **{f"icon_{k}": v for k, v in ICON_PATHS.items()},
+        **{f"event_{k}": v for k, v in EVENT_IMAGES.items()},   # ← добавляем события
     }
     for key, path in paths.items():
         try:
@@ -56,15 +62,23 @@ def load_images():
 
 
 def create_action_buttons(fonts):
-    """Создаёт 5 кнопок действий."""
+    """Создаёт 5 кнопок действий со стоимостью."""
+    from game.ui.event_modal import format_cost  # используем тот же форматтер
+
     buttons = []
-    btn_width, btn_height, gap = 230, 60, 10
-    x, y = 20, 640
+    btn_width, btn_height, gap = 230, 70, 10   # высоту увеличили с 60 до 70
+    x, y = 20, 630                             # сдвинули y чуть вверх
     for action in ACTIONS:
         rect = pygame.Rect(x, y, btn_width, btn_height)
+        cost_text = format_cost(action.cost) if action.cost else "бесплатно"
         buttons.append(
             Button(
-                rect=rect, text=action.title, font=fonts["txt5"],
+                rect=rect,
+                text=action.title,
+                font=fonts["txt5"],
+                subtitle=cost_text,
+                subtitle_font=fonts["txt6"],
+                subtitle_color=COLORS["col5"],   # тёмный, чтобы читалось на светлом
                 color_hover=COLORS["col2"],
             )
         )
@@ -112,7 +126,13 @@ def main():
     action_buttons = create_action_buttons(fonts)
 
     # Модалка события
-    modal = EventModal(fonts)
+    modal = EventModal(fonts, images)
+
+    # Модалка конца игры
+    game_modal = GameModal(fonts)
+
+    # Модалка выбывания из игры
+    elimination_modal = EliminationModal(fonts)
 
     # Кнопки выбора цели — пересоздаются при входе в CHOOSE_TARGET
     target_buttons = []
@@ -157,6 +177,8 @@ def main():
                         gs.next_turn()
                         if gs.game_over:
                             state = STATE_GAME_OVER
+                        elif gs.newly_eliminated:
+                            state = STATE_ELIMINATION
                         else:
                             gs.roll_event()
                             state = STATE_EVENT_MODAL
@@ -175,6 +197,8 @@ def main():
                     target_buttons = []
                     if gs.game_over:
                         state = STATE_GAME_OVER
+                    elif gs.newly_eliminated:
+                        state = STATE_ELIMINATION
                     else:
                         gs.roll_event()
                         state = STATE_EVENT_MODAL
@@ -192,18 +216,19 @@ def main():
                 if modal.is_continue_clicked(mouse_pos, mouse_click):
                     state = STATE_CHOOSE_ACTION
 
-        elif state == STATE_GAME_OVER:
-            # Рисуем сообщение о победе/поражении
-            if gs.winner:
-                text = f"{gs.winner.name} победил!"
-            elif gs.loser:
-                text = f"{gs.loser.name} выбыл!"
-            else:
-                text = "Игра окончена"
+        elif state == STATE_ELIMINATION:
+            elimination_modal.update_hover(mouse_pos)
+            elimination_modal.draw(screen, gs.newly_eliminated[0])
 
-            msg = fonts["txt4"].render(text, True, COLORS["col6"])
-            msg_rect = msg.get_rect(center=(WIDTH // 2, HEIGHT // 2))
-            screen.blit(msg, msg_rect)
+            if elimination_modal.is_continue_clicked(mouse_pos, mouse_click):
+                # Продолжаем игру — новое событие
+                gs.roll_event()
+                state = STATE_EVENT_MODAL
+
+        elif state == STATE_GAME_OVER:
+            game_modal.update_hover(mouse_pos)
+            game_modal.draw(screen, gs.winner, gs.loser)
+
 
         pygame.display.flip()
         clock.tick(FPS)
