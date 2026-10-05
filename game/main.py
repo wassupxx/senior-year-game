@@ -21,13 +21,12 @@ from game.ui.panel import (
 from game.ui.event_modal import EventModal, GameModal, EliminationModal
 from game.config import format_cost
 
-
 # ─── Состояния игры ───
-STATE_EVENT_MODAL   = "EVENT_MODAL"
+STATE_EVENT_MODAL = "EVENT_MODAL"
 STATE_CHOOSE_ACTION = "CHOOSE_ACTION"
 STATE_CHOOSE_TARGET = "CHOOSE_TARGET"
-STATE_GAME_OVER     = "GAME_OVER"
-STATE_ELIMINATION   = "ELIMINATION"
+STATE_GAME_OVER = "GAME_OVER"
+STATE_ELIMINATION = "ELIMINATION"
 
 
 def load_fonts():
@@ -43,14 +42,14 @@ def load_fonts():
 
 def load_images():
     """Загружает иконки, фоны и картинки событий."""
-    from game.config import EVENT_IMAGES   # импорт на месте
+    from game.config import EVENT_IMAGES  # импорт на месте
 
     images = {}
     paths = {
-        "log_panel":  IMG_LOG_PANEL,
+        "log_panel": IMG_LOG_PANEL,
         "event_card": IMG_EVENT_CARD,
         **{f"icon_{k}": v for k, v in ICON_PATHS.items()},
-        **{f"event_{k}": v for k, v in EVENT_IMAGES.items()},   # ← добавляем события
+        **{f"event_{k}": v for k, v in EVENT_IMAGES.items()},  # ← добавляем события
     }
     for key, path in paths.items():
         try:
@@ -61,15 +60,14 @@ def load_images():
     return images
 
 
-
 def create_action_buttons(fonts):
     from game.config import format_cost
 
     buttons = []
 
-    n = len(ACTIONS)            # 5 кнопок
-    side_margin = 20            # отступ от краёв окна
-    gap = 10                    # зазор между кнопками
+    n = len(ACTIONS)  # 5 кнопок
+    side_margin = 20  # отступ от краёв окна
+    gap = 10  # зазор между кнопками
     btn_height = 75
     y = 630
 
@@ -240,7 +238,6 @@ def main():
         elif state == STATE_GAME_OVER:
             game_modal.update_hover(mouse_pos)
             game_modal.draw(screen, gs.winner, gs.loser)
-
 
         pygame.display.flip()
         clock.tick(FPS)
